@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chat & Wallet App</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f0f0f0; margin:0; padding:0;}
+  #container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px;}
+  #wallet { margin-bottom: 20px; }
+  #chat-box { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; background: #fafafa; }
+  #message { width: calc(100% - 110px); padding: 10px; margin-right: 10px; }
+  button { padding: 10px 15px; cursor: pointer;}
+  #paymentPrompt { color: red; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <h2>Chat & Wallet System</h2>
+
+  <div id="wallet">
+    Wallet Balance: ₹<span id="balance">0</span>
+  </div>
+
+  <div id="paymentPrompt"></div>
+
+  <div id="chat-box"></div>
+
+  <input type="text" id="message" placeholder="Enter your message" />
+  <button id="sendBtn">Send Chat (₹5 deduction)</button>
+  <button id="addMoneyBtn">Add ₹10 to Wallet</button>
+</div>
+
+<script>
+  let walletBalance = 0;
+  const balanceDisplay = document.getElementById('balance');
+  const chatBox = document.getElementById('chat-box');
+  const paymentPrompt = document.getElementById('paymentPrompt');
+  const messageInput = document.getElementById('message');
+  const sendBtn = document.getElementById('sendBtn');
+  const addMoneyBtn = document.getElementById('addMoneyBtn');
+
+  function updateBalanceDisplay() {
+    balanceDisplay.textContent = walletBalance;
+  }
+
+  function addMessageToChat(text, sender = "You") {
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = sender + ": " + text;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function deductWallet(amount) {
+    if(walletBalance >= amount){
+      walletBalance -= amount;
+      updateBalanceDisplay();
+      paymentPrompt.textContent = "";
+      return true;
+    } else {
+      paymentPrompt.textContent = "Insufficient wallet balance. Please add money first.";
+      return false;
+    }
+  }
+
+  sendBtn.onclick = function() {
+    const msg = messageInput.value.trim();
+    if(msg === "") return alert("Please enter a message");
+
+    if(deductWallet(5)) {
+      addMessageToChat(msg);
+      messageInput.value = "";
+    }
+  };
+
+  addMoneyBtn.onclick = function() {
+    walletBalance += 10;
+    updateBalanceDisplay();
+    paymentPrompt.textContent = "₹10 added to your wallet";
+  };
+
+  updateBalanceDisplay();
+</script>
+
+</body>
+</html>
